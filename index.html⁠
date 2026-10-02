@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAASU - Smart Money Manager</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #eab308;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background: var(--accent);
+            color: var(--primary);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-upi {
+            background: #5f259f;
+            color: white;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-box {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .ad-space {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            color: #64748b;
+            font-size: 13px;
+            margin: 15px 0;
+        }
+
+        .lang-switch {
+            background: transparent;
+            color: white;
+            border: 1px solid #475569;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">K</div> KAASU
+        </div>
+        <select class="lang-switch" id="langSelect" onchange="toggleLanguage()">
+            <option value="ml">Malayalam</option>
+            <option value="en">English</option>
+        </select>
+    </header>
+
+    <div class="container">
+
+        <!-- Banner / Status -->
+        <div class="card" id="premiumStatusCard">
+            <span class="badge badge-success" id="statusBadge"> Free User</span>
+            <h3 id="upgradeTitle" style="margin-top: 10px; margin-bottom: 5px;">Upgrade to Premium ₹299</h3>
+            <p id="upgradeDesc" style="font-size: 13px; color: #64748b; margin: 0;">Unlock all feature access & remove ads</p>
+            
+            <a href="upi://pay?pa=labeebrahman@sbl&pn=KAASU%20App&am=299&cu=INR" class="btn btn-upi" style="margin-top: 15px;">
+                💳 Pay ₹299 via UPI
+            </a>
+
+            <div style="margin-top: 15px; text-align: center;">
+                <input type="text" id="activationCode" placeholder="Enter Activation Code / Trans ID">
+                <button class="btn btn-primary" onclick="activatePremium()">Unlock Premium</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="card">
+            <h3 id="dashTitle" style="margin-top:0;">📊 Dashboard</h3>
+            <div class="dashboard-grid">
+                <div class="stat-box">
+                    <small id="lblIncome">Income</small>
+                    <div class="stat-val" style="color: #16a34a;">₹0</div>
+                </div>
+                <div class="stat-box">
+                    <small id="lblExpense">Expense</small>
+                    <div class="stat-val" style="color: #dc2626;">₹0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earn Money Section -->
+        <div class="card">
+            <h3 id="earnTitle" style="margin-top:0;">💰 Earn Money</h3>
+            <p id="earnDesc" style="font-size: 13px; color: #64748b;">Complete simple tasks and earn rewards daily.</p>
+            <button class="btn btn-primary" onclick="alert('Earn options opening soon!')" id="btnEarn">Start Earning</button>
+        </div>
+
+        <!-- Ads Space -->
+        <div class="ad-space" id="adBox">
+            📢 <b>Advertisement Space</b><br>
+            Promote your business here. Contact Support.
+        </div>
+
+        <!-- Affiliate / Referral Offers Section -->
+        <div class="card">
+            <h3 id="affTitle" style="margin-top:0;">🎁 Referral & Offers</h3>
+            <p id="affDesc" style="font-size: 13px; color: #64748b;">Refer friends to earn ₹50 per activation.</p>
+            <input type="text" value="https://kaasu.app/ref?id=123" readonly>
+            <button class="btn btn-primary" onclick="navigator.clipboard.writeText('https://kaasu.app/ref?id=123'); alert('Link Copied!');" id="btnCopy">Copy Referral Link</button>
+        </div>
+
+        <!-- WhatsApp Support Button -->
+        <div class="card">
+            <a href="https://wa.me/910000000000?text=Hi,%20I%20need%20help%20with%20KAASU%20App" class="btn btn-whatsapp" target="_blank">
+                💬 WhatsApp Support
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function activatePremium() {
+            const code = document.getElementById('activationCode').value.trim();
+            if(code !== '') {
+                document.getElementById('statusBadge').innerText = '✅ Premium Active';
+                document.getElementById('statusBadge').className = 'badge badge-success';
+                document.getElementById('upgradeTitle').innerText = 'Thank you for supporting KAASU! ❤️';
+                document.getElementById('upgradeDesc').innerText = 'All premium features unlocked.';
+                document.getElementById('adBox').style.display = 'none';
+                alert('Premium Activated Successfully!');
+            } else {
+                alert('Please enter a valid code');
+            }
+        }
+
+        function toggleLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            if(lang === 'en') {
+                document.getElementById('dashTitle').innerText = '📊 Dashboard';
+                document.getElementById('lblIncome').innerText = 'Income';
+                document.getElementById('lblExpense').innerText = 'Expense';
+                document.getElementById('earnTitle').innerText = '💰 Earn Money';
+                document.getElementById('earnDesc').innerText = 'Complete simple tasks and earn rewards daily.';
+                document.getElementById('btnEarn').innerText = 'Start Earning';
+                document.getElementById('affTitle').innerText = '🎁 Referral & Offers';
+                document.getElementById('affDesc').innerText = 'Refer friends to earn ₹50 per activation.';
+                document.getElementById('btnCopy').innerText = 'Copy Referral Link';
+            } else {
+                document.getElementById('dashTitle').innerText = '📊 ഡാഷ്‌ബോർഡ്';
+                document.getElementById('lblIncome').innerText = 'വരവ്';
+                document.getElementById('lblExpense').innerText = 'ചിലവ്';
+                document.getElementById('earnTitle').innerText = '💰 പണം സമ്പാദിക്കാം';
+                document.getElementById('earnDesc').innerText = 'ലളിതമായ ടാസ്കുകൾ ചെയ്ത് ദിവസവും റിവാർഡുകൾ നേടൂ.';
+                document.getElementById('btnEarn').innerText = 'സമ്പാദിച്ചു തുടങ്ങാം';
+                document.getElementById('affTitle').innerText = '🎁 റെഫറൽ ഓഫറുകൾ';
+                document.getElementById('affDesc').innerText = 'സുഹൃത്തുക്കളെ ക്ഷണിക്കൂ, ഓരോ ആക്റ്റിവേഷനിലും ₹50 നേടൂ.';
+                document.getElementById('btnCopy').innerText = 'ലിങ്ക് കോപ്പി ചെയ്യുക';
+            }
+        }
+    </script>
+</body>
+</html>
